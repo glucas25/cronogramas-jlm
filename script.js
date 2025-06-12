@@ -12,14 +12,25 @@ const sheetUrls = {
     vicerrectorado: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-RxjI3ooOjEWIWs-4Uiw4Tm7hHe4KZE-861pSZ-vju9b4F9RuldAQkRmy8jXkLLbMCqoJL9E8oE04/pub?gid=1699425020&single=true&output=csv'
 };
 
-// Configurar eventos de pestañas
-document.querySelectorAll('.tab-button').forEach(button => {
-    button.addEventListener('click', function() {
-        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        currentTab = this.getAttribute('data-tab');
-        loadData(); // Cargar datos automáticamente al cambiar de pestaña
+// Configurar eventos de pestañas cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar eventos para los botones de pestañas
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remover clase active de todos los botones
+            tabButtons.forEach(b => b.classList.remove('active'));
+            // Añadir clase active al botón clickeado
+            this.classList.add('active');
+            // Actualizar la pestaña actual
+            currentTab = this.getAttribute('data-tab');
+            // Cargar los datos de la nueva pestaña
+            loadData();
+        });
     });
+
+    // Cargar datos iniciales
+    loadData();
 });
 
 async function loadData() {
@@ -171,76 +182,9 @@ function renderAcademicoTable(data) {
 }
 
 function renderCivicoTable(data) {
-    // Detectar las columnas disponibles
-    const availableColumns = Object.keys(data[0] || {}).filter(key => key.trim() !== '');
-    
-    if (availableColumns.length === 0) {
-        return `<div class="empty-state"><p>No se detectaron columnas válidas en los datos.</p></div>`;
-    }
-
-    let html = '<table><thead><tr>';
-    
-    availableColumns.forEach(header => {
-        html += `<th>${header}</th>`;
-    });
-    html += '</tr></thead><tbody>';
-
-    data.forEach((row, index) => {
-        const statusClass = index % 3 === 0 ? 'status-active' : index % 3 === 1 ? 'status-pending' : 'status-completed';
-        html += '<tr>';
-        
-        availableColumns.forEach((column, colIndex) => {
-            const value = row[column] || '';
-            if (colIndex === 0) {
-                html += `<td><span class="status-indicator ${statusClass}"></span>${value}</td>`;
-            } else {
-                html += `<td>${value}</td>`;
-            }
-        });
-        
-        html += '</tr>';
-    });
-
-    html += '</tbody></table>';
-    return html;
+    return renderAcademicoTable(data); // Reutilizar la misma función para mantener consistencia
 }
 
 function renderVicerrectoradoTable(data) {
-    // Detectar las columnas disponibles
-    const availableColumns = Object.keys(data[0] || {}).filter(key => key.trim() !== '');
-    
-    if (availableColumns.length === 0) {
-        return `<div class="empty-state"><p>No se detectaron columnas válidas en los datos.</p></div>`;
-    }
-
-    let html = '<table><thead><tr>';
-    
-    availableColumns.forEach(header => {
-        html += `<th>${header}</th>`;
-    });
-    html += '</tr></thead><tbody>';
-
-    data.forEach((row, index) => {
-        const statusClass = index % 3 === 0 ? 'status-active' : index % 3 === 1 ? 'status-pending' : 'status-completed';
-        html += '<tr>';
-        
-        availableColumns.forEach((column, colIndex) => {
-            const value = row[column] || '';
-            if (colIndex === 0) {
-                html += `<td><span class="status-indicator ${statusClass}"></span>${value}</td>`;
-            } else {
-                html += `<td>${value}</td>`;
-            }
-        });
-        
-        html += '</tr>';
-    });
-
-    html += '</tbody></table>';
-    return html;
+    return renderAcademicoTable(data); // Reutilizar la misma función para mantener consistencia
 }
-
-// Cargar datos iniciales al abrir la página
-document.addEventListener('DOMContentLoaded', function() {
-    loadData(); // Cargar cronograma académico por defecto
-});
