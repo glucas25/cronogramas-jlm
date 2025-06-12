@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma Académico de la UE Juan León Mera</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.5px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .controls {
+            padding: 30px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-button {
+            background: #fff;
+            color: #2d3748;
+            border: 2px solid #4a5568;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(45, 55, 72, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-button:hover {
+            background: #4a5568;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(45, 55, 72, 0.2);
+        }
+
+        .tab-button.active {
+            background: #4a5568;
+            color: white;
+            box-shadow: 0 4px 8px rgba(45, 55, 72, 0.2);
+        }
+
+        .refresh-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .refresh-button {
+            background: #4a5568;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(45, 55, 72, 0.2);
+        }
+
+        .refresh-button:hover {
+            background: #2d3748;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(45, 55, 72, 0.3);
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+            color: #2d3748;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #4a5568;
+            box-shadow: 0 0 0 3px rgba(45, 55, 72, 0.1);
+        }
+
+        .content {
+            padding: 30px;
+            min-height: 400px;
+            background: #fff;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #4a5568;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(153, 27, 27, 0.1);
+            border-left: 4px solid #991b1b;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-top: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.95rem;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        thead tr {
+            background: #4a5568;
+        }
+
+        thead tr:hover {
+            background: #4a5568;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 500;
+            color: white;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            background: transparent;
+            border-bottom: 2px solid #2d3748;
+        }
+
+        th:hover {
+            background: transparent;
+        }
+
+        tbody tr {
+            background: white;
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+        }
+
+        tbody tr:hover td {
+            color: #2d3748;
+        }
+
+        /* Asegurar que el encabezado mantenga su color */
+        thead tr,
+        thead tr:hover,
+        thead th,
+        thead th:hover {
+            background: #2e3b4f !important;
+            color: white !important;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .tab-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .refresh-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .empty-state img {
+            width: 120px;
+            height: 120px;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+
+        .instruction-card {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.25);
+            border-left: 5px solid #ffffff;
+        }
+
+        .instruction-card h3 {
+            margin-bottom: 18px;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .instruction-card ol {
+            padding-left: 25px;
+            line-height: 1.8;
+        }
+
+        .instruction-card li {
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-school"></i> Unidad Educativa Fiscal Juan León Mera</h1>
+            <p>Sistema integral de gestión y visualización de cronogramas</p>
+        </div>
+
+        <div class="controls">
+            <div class="tab-container">
+                <button class="tab-button active" data-tab="academico">
+                    📚 Cronograma Académico
+                </button>
+                <button class="tab-button" data-tab="civico">
+                    🏛️ Momentos Cívicos
+                </button>
+                <button class="tab-button" data-tab="vicerrectorado">
+                    📋 Vicerrectorado
+                </button>
+            </div> 
+        </div>
+
+        <div class="content" id="content">
+            <div class="empty-state">
+                <div style="font-size: 4rem; margin-bottom: 20px;">📊</div>
+                <h3>Sistema de Cronogramas Institucionales</h3>
+                <p>Haz clic en "Actualizar Cronogramas" para cargar los datos más recientes desde Google Sheets.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'academico';
+        let cronogramas = {
+            academico: [],
+            civico: [],
+            vicerrectorado: []
+        };
+
+        // URLs específicas para cada hoja de Google Sheets
+        const sheetUrls = {
+            academico: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-RxjI3ooOjEWIWs-4Uiw4Tm7hHe4KZE-861pSZ-vju9b4F9RuldAQkRmy8jXkLLbMCqoJL9E8oE04/pub?gid=0&single=true&output=csv',
+            civico: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-RxjI3ooOjEWIWs-4Uiw4Tm7hHe4KZE-861pSZ-vju9b4F9RuldAQkRmy8jXkLLbMCqoJL9E8oE04/pub?gid=674664369&single=true&output=csv',
+            vicerrectorado: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-RxjI3ooOjEWIWs-4Uiw4Tm7hHe4KZE-861pSZ-vju9b4F9RuldAQkRmy8jXkLLbMCqoJL9E8oE04/pub?gid=1699425020&single=true&output=csv'
+        };
+
+        // Configurar eventos de pestañas
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentTab = this.getAttribute('data-tab');
+                loadData(); // Cargar datos automáticamente al cambiar de pestaña
+            });
+        });
+
+        async function loadData() {
+            const url = sheetUrls[currentTab];
+            
+            if (!url) {
+                showError('URL no configurada para este cronograma.');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const csvText = await response.text();
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    dynamicTyping: true,
+                    complete: function(results) {
+                        if (results.errors.length > 0) {
+                            console.error('Errores al parsear CSV:', results.errors);
+                        }
+                        
+                        // Limpiar headers (remover espacios)
+                        const cleanData = results.data.map(row => {
+                            const cleanRow = {};
+                            Object.keys(row).forEach(key => {
+                                const cleanKey = key.trim();
+                                cleanRow[cleanKey] = row[key];
+                            });
+                            return cleanRow;
+                        });
+
+                        // Filtrar filas vacías
+                        const filteredData = cleanData.filter(row => {
+                            return Object.values(row).some(value => 
+                                value !== null && value !== undefined && value !== ''
+                            );
+                        });
+                        
+                        cronogramas[currentTab] = filteredData;
+                        renderTable();
+                    },
+                    error: function(error) {
+                        showError('Error al procesar los datos: ' + error.message);
+                    }
+                });
+
+            } catch (error) {
+                showError('Error al cargar los datos: ' + error.message + '. Verifica que el Google Sheet esté publicado correctamente.');
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('content').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Cargando cronograma ${currentTab}...</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            document.getElementById('content').innerHTML = `
+                <div class="error">
+                    ⚠️ ${message}
+                </div>
+                <div class="empty-state">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">📊</div>
+                    <h3>Error al cargar datos</h3>
+                    <p>Verifica que el Google Sheet esté publicado correctamente y que contenga las hojas correspondientes.</p>
+                </div>
+            `;
+        }
+
+        function renderTable() {
+            const data = cronogramas[currentTab];
+            const content = document.getElementById('content');
+
+            if (!data || data.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">📋</div>
+                        <h3>No hay datos disponibles</h3>
+                        <p>No se encontraron datos en la hoja ${currentTab}. Verifica que la hoja contenga información.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let tableHtml = '';
+            
+            if (currentTab === 'academico') {
+                tableHtml = renderAcademicoTable(data);
+            } else if (currentTab === 'civico') {
+                tableHtml = renderCivicoTable(data);
+            } else if (currentTab === 'vicerrectorado') {
+                tableHtml = renderVicerrectoradoTable(data);
+            }
+
+            content.innerHTML = `
+                <div class="table-container">
+                    <div class="table-wrapper">
+                        ${tableHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAcademicoTable(data) {
+            // Detectar las columnas disponibles
+            const availableColumns = Object.keys(data[0] || {}).filter(key => key.trim() !== '');
+            
+            if (availableColumns.length === 0) {
+                return `<div class="empty-state"><p>No se detectaron columnas válidas en los datos.</p></div>`;
+            }
+
+            let html = '<table><thead><tr>';
+            
+            availableColumns.forEach(header => {
+                html += `<th>${header}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            data.forEach((row, index) => {
+                const statusClass = index % 3 === 0 ? 'status-active' : index % 3 === 1 ? 'status-pending' : 'status-completed';
+                html += '<tr>';
+                
+                availableColumns.forEach((column, colIndex) => {
+                    const value = row[column] || '';
+                    if (colIndex === 0) {
+                        html += `<td><span class="status-indicator ${statusClass}"></span>${value}</td>`;
+                    } else {
+                        html += `<td>${value}</td>`;
+                    }
+                });
+                
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function renderCivicoTable(data) {
+            // Detectar las columnas disponibles
+            const availableColumns = Object.keys(data[0] || {}).filter(key => key.trim() !== '');
+            
+            if (availableColumns.length === 0) {
+                return `<div class="empty-state"><p>No se detectaron columnas válidas en los datos.</p></div>`;
+            }
+
+            let html = '<table><thead><tr>';
+            
+            availableColumns.forEach(header => {
+                html += `<th>${header}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            data.forEach((row, index) => {
+                const statusClass = index % 3 === 0 ? 'status-active' : index % 3 === 1 ? 'status-pending' : 'status-completed';
+                html += '<tr>';
+                
+                availableColumns.forEach((column, colIndex) => {
+                    const value = row[column] || '';
+                    if (colIndex === 0) {
+                        html += `<td><span class="status-indicator ${statusClass}"></span>${value}</td>`;
+                    } else {
+                        html += `<td>${value}</td>`;
+                    }
+                });
+                
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function renderVicerrectoradoTable(data) {
+            // Detectar las columnas disponibles
+            const availableColumns = Object.keys(data[0] || {}).filter(key => key.trim() !== '');
+            
+            if (availableColumns.length === 0) {
+                return `<div class="empty-state"><p>No se detectaron columnas válidas en los datos.</p></div>`;
+            }
+
+            let html = '<table><thead><tr>';
+            
+            availableColumns.forEach(header => {
+                html += `<th>${header}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            data.forEach((row, index) => {
+                const statusClass = index % 3 === 0 ? 'status-active' : index % 3 === 1 ? 'status-pending' : 'status-completed';
+                html += '<tr>';
+                
+                availableColumns.forEach((column, colIndex) => {
+                    const value = row[column] || '';
+                    if (colIndex === 0) {
+                        html += `<td><span class="status-indicator ${statusClass}"></span>${value}</td>`;
+                    } else {
+                        html += `<td>${value}</td>`;
+                    }
+                });
+                
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            return html;
+        }
+
+        // Cargar datos iniciales al abrir la página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData(); // Cargar cronograma académico por defecto
+        });
+    </script>
+</body>
+</html>
