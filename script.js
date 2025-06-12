@@ -12,21 +12,30 @@ const sheetUrls = {
     vicerrectorado: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT-RxjI3ooOjEWIWs-4Uiw4Tm7hHe4KZE-861pSZ-vju9b4F9RuldAQkRmy8jXkLLbMCqoJL9E8oE04/pub?gid=1699425020&single=true&output=csv'
 };
 
-// Configurar eventos de pestañas cuando el DOM esté listo
+// Configurar eventos cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     // Configurar eventos para los botones de pestañas
     const tabButtons = document.querySelectorAll('.tab-button');
+    
     tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        // Función para manejar el cambio de pestaña
+        function handleTabChange(e) {
+            e.preventDefault(); // Prevenir comportamiento por defecto
+            e.stopPropagation(); // Detener propagación del evento
+            
             // Remover clase active de todos los botones
             tabButtons.forEach(b => b.classList.remove('active'));
-            // Añadir clase active al botón clickeado
-            this.classList.add('active');
+            // Añadir clase active al botón clickeado/tocado
+            button.classList.add('active');
             // Actualizar la pestaña actual
-            currentTab = this.getAttribute('data-tab');
+            currentTab = button.getAttribute('data-tab');
             // Cargar los datos de la nueva pestaña
             loadData();
-        });
+        }
+
+        // Agregar eventos tanto para click como para touch
+        button.addEventListener('click', handleTabChange);
+        button.addEventListener('touchstart', handleTabChange, { passive: false });
     });
 
     // Cargar datos iniciales

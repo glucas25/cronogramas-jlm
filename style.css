@@ -103,6 +103,10 @@ body {
     box-shadow: 0 2px 4px rgba(45, 55, 72, 0.1);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    min-width: 120px;
+    min-height: 44px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .tab-button:hover {
@@ -296,8 +300,16 @@ thead th:hover {
     }
 
     .tab-button {
-        padding: 10px 20px;
-        font-size: 0.9rem;
+        padding: 15px 20px;
+        font-size: 1rem;
+        margin: 5px;
+        flex: 1 1 calc(50% - 10px);
+        min-width: calc(50% - 10px);
+    }
+
+    .tab-container {
+        gap: 10px;
+        padding: 10px;
     }
 
     .refresh-button {
