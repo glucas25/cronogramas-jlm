@@ -194,6 +194,16 @@ body {
     margin: 0 auto 20px;
 }
 
+.logo-jlm {
+    width: 80px;           /* o el tamaño que quieras */
+    height: 80px;          /* para que sea cuadrado perfecto */
+    border-radius: 80%;     /* lo redondea al máximo, círculo */
+    object-fit: cover;      /* ajusta la imagen dentro del recorte */
+    display: block;         /* evita márgenes indeseados */ 
+    margin: 0 auto;
+  }
+  
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
