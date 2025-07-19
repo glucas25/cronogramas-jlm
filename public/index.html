@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Unidad Educativa Fiscal Juan León Mera</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js"></script>
+   
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-jlm-wrapper">
+                <img src="img/logoJLM.jpg" alt="Logo JLM" class="logo-jlm" />
+            </div>
+            <h1>Unidad Educativa Fiscal Juan León Mera</h1>
+            <p>Sistema integral de gestión y visualización de cronogramas</p>
+        </div>
+
+        <div class="controls">
+            <div class="tab-container">
+                <button class="tab-button active" data-tab="academico">
+                    📚 Cronograma Escolar
+                </button>
+                <button class="tab-button" data-tab="civico">
+                    🏛️ Momentos Cívicos
+                </button>
+                <button class="tab-button" data-tab="vicerrectorado">
+                    📋 Vicerrectorado
+                </button>
+            </div> 
+        </div>
+
+        <div class="content" id="content">
+            <div class="empty-state">
+                <div style="font-size: 4rem; margin-bottom: 20px;">📊</div>
+                <h3>Sistema de Cronogramas Institucionales</h3>
+                <p>Haz clic en "Actualizar Cronogramas" para cargar los datos más recientes desde Google Sheets.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
