@@ -40,7 +40,9 @@ function exportarPDF(tab: CronogramaTipo, datos: Cronograma[]) {
     inicio: "Eventos Próximos",
     academico: "Cronograma Escolar",
     civico: "Momentos Cívicos",
-    vicerrectorado: "Documentos Solicitados"
+    vicerrectorado: "Documentos Solicitados",
+    talleres: "Cronograma de Talleres Dirigido a Padres de Familia",
+    visitas: "Visitas Aúlicas"
   };
 
   // Encabezado
@@ -85,7 +87,7 @@ function App() {
   useEffect(() => {
     // Cargar todos los cronogramas al iniciar la aplicación
     const loadAllData = async () => {
-      const tipos: CronogramaTipo[] = ['academico', 'civico', 'vicerrectorado'];
+      const tipos: CronogramaTipo[] = ['academico', 'civico', 'vicerrectorado', 'talleres', 'visitas'];
       await Promise.all(tipos.map(tipo => loadData(tipo)));
     };
     
@@ -98,10 +100,29 @@ function App() {
       loadData(currentTab);
     }
   }, [currentTab, loadData]);
+
+  // Scroll automático a la fila de la semana actual
+  useEffect(() => {
+    // Solo ejecutar cuando hay datos cargados y no estamos en la pestaña de inicio
+    if (currentTab !== 'inicio' && cronogramas[currentTab] && cronogramas[currentTab].length > 0) {
+      // Usar setTimeout para asegurar que el DOM se haya renderizado
+      const timer = setTimeout(() => {
+        const currentWeekRow = document.querySelector('.current-week');
+        if (currentWeekRow) {
+          currentWeekRow.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }
+      }, 100); // Pequeño delay para asegurar que la tabla se haya renderizado
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentTab, cronogramas]);
   
   const eventosProximos = useMemo(() => {
     const eventos: EventoProximo[] = [];
-    const tipos: CronogramaTipo[] = ['academico', 'civico', 'vicerrectorado'];
+    const tipos: CronogramaTipo[] = ['academico', 'civico', 'vicerrectorado', 'talleres', 'visitas'];
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalizar la fecha actual
     
@@ -200,6 +221,34 @@ function App() {
               cursoResponsable
             });
           }
+        } else if (tipo === 'talleres') {
+          // Para talleres, incluir el curso
+          if (fecha >= today) {
+            const cursoResponsable = String(item['Curso'] || '');
+            eventosDelTipo.push({
+              tipo,
+              titulo,
+              fecha: String(item['Fecha'] || ''),
+              descripcion: item['Observaciones'] ? String(item['Observaciones']) : undefined,
+              cursoResponsable
+            });
+          }
+        } else if (tipo === 'visitas') {
+          // Para visitas, incluir curso, paralelo y docente
+          if (fecha >= today) {
+            const cursoResponsable = String(item['Curso'] || '');
+            const paralelo = String(item['Paralelo'] || '');
+            const docente = String(item['Docente'] || '');
+            const descripcion = `${paralelo} - ${docente}`;
+            
+            eventosDelTipo.push({
+              tipo,
+              titulo,
+              fecha: String(item['Fecha'] || ''),
+              descripcion,
+              cursoResponsable
+            });
+          }
         } else {
           // Para otros tipos de eventos, mostrar todos
           eventosDelTipo.push({
@@ -276,7 +325,7 @@ function App() {
 
     return (
       <div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
           <a
             href="#"
             className="pdf-link"
@@ -365,6 +414,52 @@ function App() {
                     }
                   }
                 }
+                // Para talleres: resaltar la fila de la semana actual o próxima
+                if (currentTab === 'talleres' && row['Fecha']) {
+                  const fechaStr = String(row['Fecha']);
+                  const range = extractDateRange(fechaStr);
+                  let fechaTaller: Date | null = null;
+                  if (range) {
+                    fechaTaller = range.start;
+                  } else {
+                    // Intentar parsear como fecha simple
+                    const date = new Date(fechaStr);
+                    if (!isNaN(date.getTime())) {
+                      fechaTaller = date;
+                    }
+                  }
+                  if (fechaTaller) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    // Resaltar talleres de esta semana o próximos
+                    if (fechaTaller >= today) {
+                      isCurrentWeek = true;
+                    }
+                  }
+                }
+                // Para visitas: resaltar la fila de la semana actual o próxima
+                if (currentTab === 'visitas' && row['Fecha']) {
+                  const fechaStr = String(row['Fecha']);
+                  const range = extractDateRange(fechaStr);
+                  let fechaVisita: Date | null = null;
+                  if (range) {
+                    fechaVisita = range.start;
+                  } else {
+                    // Intentar parsear como fecha simple
+                    const date = new Date(fechaStr);
+                    if (!isNaN(date.getTime())) {
+                      fechaVisita = date;
+                    }
+                  }
+                  if (fechaVisita) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    // Resaltar visitas de esta semana o próximas
+                    if (fechaVisita >= today) {
+                      isCurrentWeek = true;
+                    }
+                  }
+                }
                 return (
                   <tr key={index} className={isCurrentWeek ? 'current-week' : ''}>
                     {Object.entries(row)
@@ -384,10 +479,7 @@ function App() {
 
   return (
     <div className="container">
-      <Header />
-      <div className="controls">
-        <TabSelector currentTab={currentTab} onTabChange={handleTabChange} />
-      </div>
+      <Header currentTab={currentTab} onTabChange={handleTabChange} />
       <div className="content">{renderContent()}</div>
     </div>
   );

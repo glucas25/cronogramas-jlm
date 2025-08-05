@@ -31,6 +31,28 @@ const EventosProximos = ({ eventos }: EventosProximosProps) => {
                                         <h3 className="evento-titulo">{evento.titulo}</h3>
                                         <div className="evento-fecha">{formatDate(evento.fecha)}</div>
                                     </div>
+                                ) : tipo === 'talleres' ? (
+                                    <div key={index} className="evento-card">
+                                        <div className="evento-fecha">{formatDate(evento.fecha)}</div>
+                                        <h3 className="evento-titulo">{evento.titulo}</h3>
+                                        {evento.cursoResponsable && (
+                                            <div className="evento-curso">Curso: {evento.cursoResponsable}</div>
+                                        )}
+                                        {evento.descripcion && (
+                                            <p className="evento-descripcion">{evento.descripcion}</p>
+                                        )}
+                                    </div>
+                                ) : tipo === 'visitas' ? (
+                                    <div key={index} className="evento-card">
+                                        <div className="evento-fecha">{formatDate(evento.fecha)}</div>
+                                        <h3 className="evento-titulo">{evento.titulo}</h3>
+                                        {evento.cursoResponsable && (
+                                            <div className="evento-curso">Curso: {evento.cursoResponsable}</div>
+                                        )}
+                                        {evento.descripcion && (
+                                            <div className="evento-descripcion">{evento.descripcion}</div>
+                                        )}
+                                    </div>
                                 ) : (
                                     <div key={index} className="evento-card">
                                         <div className="evento-fecha">{formatDate(evento.fecha)}</div>
@@ -63,9 +85,11 @@ const EventosProximos = ({ eventos }: EventosProximosProps) => {
 
 const getTipoLabel = (tipo: string) => {
     const labels: Record<string, { text: string; icon: string }> = {
-        academico: { text: 'Académico', icon: '📚' },
-        civico: { text: 'Cívico', icon: '🏛️' },
-        vicerrectorado: { text: 'Documentos Solicitados', icon: '📋' }
+        academico: { text: 'Cronograma Académico', icon: '📚' },
+        civico: { text: 'Minuto Cívico', icon: '🏛️' },
+        vicerrectorado: { text: 'Documentos Solicitados', icon: '📋' },
+        talleres: { text: 'Talleres a Padres', icon: '👨‍👩‍👧‍👦' },
+        visitas: { text: 'Visitas Aúlicas', icon: '🏫' }
     };
     return labels[tipo] ? `${labels[tipo].icon} ${labels[tipo].text}` : tipo;
 };

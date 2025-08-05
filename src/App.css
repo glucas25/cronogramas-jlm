@@ -79,12 +79,12 @@ body {
 .header {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     color: white;
-    padding: 2rem;
+    padding: 1.5rem 2rem;
     text-align: left;
     position: relative;
     overflow: hidden;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 1.5rem;
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
@@ -96,6 +96,21 @@ body {
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     opacity: 0.1;
     mask-image: radial-gradient(circle at center, black, transparent 80%);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.header-tabs {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
 }
 
 .header h1 {
@@ -141,81 +156,101 @@ body {
     justify-content: center;
 }
 
-.controls {
-    padding: 1.5rem;
-    background: var(--background-light);
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    backdrop-filter: blur(10px);
-}
-
-.tab-container {
+/* Nuevo diseño de navegación por tabs */
+.tab-navigation {
     display: flex;
-    gap: 1rem;
+    gap: 0.4rem;
     margin: 0;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     max-width: 100%;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
+    padding: 0.5rem 0;
 }
 
-.tab-button {
-    background: var(--background-white);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    padding: 1rem 1.5rem;
-    border-radius: var(--radius-lg);
+.tab-link {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 0.6rem 1rem;
+    border-radius: 50px;
     cursor: pointer;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: 500;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    box-shadow: var(--shadow-sm);
+    gap: 0.4rem;
+    text-decoration: none;
     position: relative;
     overflow: hidden;
-    min-width: 140px;
+    min-width: 120px;
+    max-width: 160px;
     justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
 }
 
-.tab-button::before {
+.tab-link::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
     opacity: 0;
     transition: opacity 0.3s ease;
+    border-radius: 50px;
 }
 
-.tab-button:hover {
+.tab-link:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--primary-color);
-}
-
-.tab-button:hover::before {
-    opacity: 1;
-}
-
-.tab-button.active {
-    background: var(--primary-color);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.25);
     color: white;
-    border-color: var(--primary-color);
-    font-weight: 600;
-    box-shadow: var(--shadow-md);
 }
 
-.tab-button.active::before {
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
+.tab-link:hover::before {
     opacity: 1;
+}
+
+.tab-link.active {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    color: #1e293b;
+    border-color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.tab-link.active::before {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+    opacity: 1;
+}
+
+.tab-icon {
+    font-size: 1.1rem;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.tab-link:hover .tab-icon {
+    transform: scale(1.1);
+}
+
+.tab-label {
+    font-weight: 500;
+    letter-spacing: 0.025em;
 }
 
 .content {
     padding: clamp(2rem, 4vw, 3rem);
     min-height: 400px;
-    display: grid;
-    place-items: center;
+    display: block;
+    width: 100%;
 }
 
 .empty-state {
@@ -289,7 +324,9 @@ body {
 }
 
 .table-container {
-    width: 100%;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
     overflow-x: auto;
     background: var(--background-white);
     border-radius: var(--radius-lg);
@@ -301,6 +338,74 @@ body {
     border-radius: 12px;
     box-shadow: 0 2px 12px rgba(25, 118, 210, 0.06);
     position: relative;
+}
+
+/* Asegurar que el contenedor de la tabla ocupe todo el ancho */
+.table-container {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    display: block;
+    box-sizing: border-box;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Forzar que el contenido de la tabla ocupe todo el ancho */
+.table-container > div {
+    width: 100% !important;
+    min-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Asegurar que las tablas ocupen todo el ancho disponible */
+.table-container table {
+    width: 100% !important;
+    min-width: 100% !important;
+    table-layout: fixed;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Eliminar espacios innecesarios en el contenido */
+.content > div {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.content > div > div:first-child {
+    margin-bottom: 4px !important;
+    padding: 0 !important;
+}
+
+/* Reducir espacio en el contenedor de la tabla */
+.table-container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Eliminar espacio adicional en el div que contiene la tabla */
+.content > div > div:last-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Asegurar que el contenido de las tablas se alinee correctamente */
+.content > div {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Eliminar cualquier centrado que pueda estar causando espacio */
+.content {
+    display: block !important;
+    place-items: unset !important;
+    align-items: unset !important;
+    justify-content: unset !important;
 }
 
 .table-container .sticky-toolbar {
@@ -328,36 +433,87 @@ body {
     border-radius: var(--radius-sm);
 }
 
-table {
-    width: 100%;
+/* Reglas específicas para todas las tablas */
+.table-container table {
+    width: 100% !important;
+    min-width: 100% !important;
     border-collapse: collapse;
     font-size: 0.875rem;
     border-radius: 8px;
     overflow: hidden;
+    table-layout: auto;
 }
 
-th, td {
+/* Reglas para celdas de tabla */
+.table-container table th,
+.table-container table td {
     padding: 1rem;
     text-align: left;
     border-bottom: 1px solid var(--border-light);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: auto;
+    min-width: 120px;
+    max-width: none;
 }
 
-th {
-    background: var(--background-light);
+/* Reglas específicas para encabezados */
+.table-container table th {
+    background: #d0e4fa;
+    color: #0d47a1;
     font-weight: 700;
-    color: var(--text-primary);
+    padding: 7px 6px;
+    border-bottom: 2px solid #1976d2;
+    font-size: 0.98rem;
+    box-shadow: 0 1px 3px rgba(25, 118, 210, 0.03);
+    letter-spacing: 0.3px;
+    text-align: center;
+    min-width: 120px;
+    width: auto;
     position: sticky;
     top: 0;
     z-index: 5;
-    font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-td {
+/* Reglas específicas para celdas de datos */
+.table-container table td {
     color: var(--text-primary);
     font-size: 0.875rem;
     font-weight: 500;
+    min-width: 120px;
+}
+
+/* Forzar ancho completo para todas las tablas */
+div.table-container {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+div.table-container table {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Para tablas con pocas columnas, distribuir el espacio */
+div.table-container table th,
+div.table-container table td {
+    width: auto !important;
+    min-width: 150px !important;
+}
+
+/* Específicamente para tablas con 2 columnas */
+div.table-container table th:only-child,
+div.table-container table td:only-child {
+    width: 50% !important;
+}
+
+div.table-container table th:first-child:nth-last-child(2),
+div.table-container table td:first-child:nth-last-child(2) {
+    width: 50% !important;
 }
 
 tr {
@@ -415,18 +571,6 @@ td[data-status="completado"] {
     font-weight: 500;
 }
 
-table thead tr th {
-  background: #d0e4fa; /* azul más notorio */
-  color: #0d47a1;
-  font-weight: 700;
-  padding: 7px 6px;
-  border-bottom: 2px solid #1976d2;
-  font-size: 0.98rem;
-  box-shadow: 0 1px 3px rgba(25, 118, 210, 0.03);
-  letter-spacing: 0.3px;
-  text-align: center;
-}
-
 .table-container button {
   background: #1976d2;
   color: #fff;
@@ -474,14 +618,33 @@ table thead tr th {
         min-height: 100vh;
     }
     
-    .tab-button {
-        min-width: auto;
-        flex: 1;
-        padding: 0.75rem 1rem;
+    .header {
+        padding: 1rem;
+        gap: 1rem;
     }
     
-    .controls {
-        padding: 1rem;
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .tab-navigation {
+        gap: 0.3rem;
+        justify-content: center;
+        overflow-x: auto;
+        padding: 0.3rem 0;
+    }
+    
+    .tab-link {
+        min-width: 100px;
+        max-width: 140px;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.65rem;
+    }
+    
+    .tab-label {
+        font-size: 0.6rem;
     }
     
     .content {
@@ -491,11 +654,14 @@ table thead tr th {
     .table-container {
         margin: 0 -1.5rem;
         border-radius: 0;
+        width: 100%;
+        min-width: 100%;
     }
     
     td, th {
         padding: 0.75rem 0.5rem;
         font-size: 0.75rem;
+        min-width: 100px;
     }
 }
 
@@ -503,32 +669,72 @@ table thead tr th {
   .table-container {
     max-height: 320px;
     border-radius: 8px;
+    width: 100%;
+    min-width: 100%;
   }
   table thead tr th {
     font-size: 0.93rem;
     padding: 6px 4px;
+    min-width: 100px;
   }
 }
 
 @media (max-width: 600px) {
-  .table-container {
-    max-height: 220px;
-    border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(25, 118, 210, 0.04);
-    overflow-x: auto;
-    padding-bottom: 2px;
-  }
-  table {
-    min-width: 520px;
-    font-size: 0.92rem;
-  }
-  table thead tr th, table tbody tr td {
-    font-size: 0.91rem;
-    padding: 5px 3px;
-  }
-  .pdf-link {
-    font-size: 0.97rem;
-    padding: 0 2px;
+    .header {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .tab-navigation {
+        gap: 0.25rem;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 0.25rem 0;
+    }
+    
+    .tab-link {
+        min-width: 90px;
+        max-width: 120px;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.6rem;
+        flex-shrink: 0;
+    }
+    
+    .tab-label {
+        font-size: 0.55rem;
+    }
+    
+    .table-container {
+        max-height: 220px;
+        border-radius: 6px;
+        box-shadow: 0 1px 4px rgba(25, 118, 210, 0.04);
+        overflow-x: auto;
+        padding-bottom: 2px;
+        width: 100%;
+        min-width: 100%;
+    }
+    
+    table {
+        min-width: 520px;
+        font-size: 0.92rem;
+        width: 100%;
+    }
+    
+    table thead tr th, table tbody tr td {
+        font-size: 0.91rem;
+        padding: 5px 3px;
+        min-width: 80px;
+    }
+    
+    .pdf-link {
+        font-size: 0.97rem;
+        padding: 0 2px;
     }
 }
 
