@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo } from 'react';
 import type { CronogramaTipo, EventoProximo, Cronograma } from './types/cronograma';
 import { useCronogramas } from './hooks/useCronogramas';
 import Header from './components/Header';
-import TabSelector from './components/TabSelector';
 import EventosProximos from './components/EventosProximos';
 import './App.css';
 import { extractDateRange } from './utils/dateUtils';

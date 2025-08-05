@@ -8,7 +8,9 @@ export const useCronogramas = () => {
         inicio: [],
         academico: [],
         civico: [],
-        vicerrectorado: []
+        vicerrectorado: [],
+        talleres: [],
+        visitas: []
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

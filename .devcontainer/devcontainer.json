@@ -1,7 +1,0 @@
-{
-  "name": "Web TS + Backend",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:18",
-  "workspaceFolder": "/workspace/cronogramas-jlm",
-  "postCreateCommand": "npm ci && npm install -g typescript",
-  "forwardPorts": [3000, 4000]
-}

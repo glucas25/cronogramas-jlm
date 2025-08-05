@@ -11,7 +11,7 @@ const TabSelector = ({ currentTab, onTabChange }: TabSelectorProps) => {
         { id: 'academico', label: 'Cronograma', icon: '📚' },
         { id: 'civico', label: 'Momentos Cívicos', icon: '🏛️' },
         { id: 'vicerrectorado', label: 'Documentos', icon: '📋' },
-        { id: 'talleres', label: 'Talleres aPadres', icon: '👨‍👩‍👧‍👦' },
+        { id: 'talleres', label: 'Talleres a Padres', icon: '👨‍👩‍👧‍👦' },
         { id: 'visitas', label: 'Visitas Aúlicas', icon: '🏫' }
     ];
 
